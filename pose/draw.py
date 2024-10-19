@@ -1,30 +1,50 @@
-from mediapipe import solutions
-from mediapipe.framework.formats import landmark_pb2
+import matplotlib.pyplot as plt
+from matplotlib.patches import Circle
 import numpy as np
+import cv2
+import os
 
+def draw_landmarks_on_image(cropped_image, processed_landmarks, dimensions):
+    fig, ax = plt.subplots()
+    ax.imshow(cropped_image)
+    for landmark in processed_landmarks:
+        print(landmark)
+        x, y = processed_landmarks[landmark][0], processed_landmarks[landmark][1]
+        ax.add_patch(Circle((x * dimensions[1], y * dimensions[0]), 2, color='r'))
+    
+    ax.plot([processed_landmarks["neck"][0] * dimensions[1], processed_landmarks["pelvis"][0] * dimensions[1]],
+        [processed_landmarks["neck"][1] * dimensions[0], processed_landmarks["pelvis"][1] * dimensions[0]], 'r-')
+    ax.plot([processed_landmarks["neck"][0] * dimensions[1], processed_landmarks["left_shoulder"][0] * dimensions[1]],
+        [processed_landmarks["neck"][1] * dimensions[0], processed_landmarks["left_shoulder"][1] * dimensions[0]], 'b-')
+    ax.plot([processed_landmarks["neck"][0] * dimensions[1], processed_landmarks["right_shoulder"][0] * dimensions[1]],
+        [processed_landmarks["neck"][1] * dimensions[0], processed_landmarks["right_shoulder"][1] * dimensions[0]], 'b-')
+    ax.plot([processed_landmarks["neck"][0] * dimensions[1], processed_landmarks["nose"][0] * dimensions[1]],
+        [processed_landmarks["neck"][1] * dimensions[0], processed_landmarks["nose"][1] * dimensions[0]], 'r-')
+    ax.plot([processed_landmarks["left_shoulder"][0] * dimensions[1], processed_landmarks["left_elbow"][0] * dimensions[1]],
+        [processed_landmarks["left_shoulder"][1] * dimensions[0], processed_landmarks["left_elbow"][1] * dimensions[0]], 'b-')
+    ax.plot([processed_landmarks["left_elbow"][0] * dimensions[1], processed_landmarks["left_wrist"][0] * dimensions[1]],
+        [processed_landmarks["left_elbow"][1] * dimensions[0], processed_landmarks["left_wrist"][1] * dimensions[0]], 'b-')
+    ax.plot([processed_landmarks["right_shoulder"][0] * dimensions[1], processed_landmarks["right_elbow"][0] * dimensions[1]],
+        [processed_landmarks["right_shoulder"][1] * dimensions[0], processed_landmarks["right_elbow"][1] * dimensions[0]], 'b-')
+    ax.plot([processed_landmarks["right_elbow"][0] * dimensions[1], processed_landmarks["right_wrist"][0] * dimensions[1]],
+        [processed_landmarks["right_elbow"][1] * dimensions[0], processed_landmarks["right_wrist"][1] * dimensions[0]], 'b-')
+    ax.plot([processed_landmarks["pelvis"][0] * dimensions[1], processed_landmarks["right_knee"][0] * dimensions[1]],
+        [processed_landmarks["pelvis"][1] * dimensions[0], processed_landmarks["right_knee"][1] * dimensions[0]], 'g-')
+    ax.plot([processed_landmarks["pelvis"][0] * dimensions[1], processed_landmarks["left_knee"][0] * dimensions[1]],
+        [processed_landmarks["pelvis"][1] * dimensions[0], processed_landmarks["left_knee"][1] * dimensions[0]], 'g-')
+    ax.plot([processed_landmarks["right_knee"][0] * dimensions[1], processed_landmarks["right_ankle"][0] * dimensions[1]],
+        [processed_landmarks["right_knee"][1] * dimensions[0], processed_landmarks["right_ankle"][1] * dimensions[0]], 'g-')
+    ax.plot([processed_landmarks["left_knee"][0] * dimensions[1], processed_landmarks["left_ankle"][0] * dimensions[1]],
+        [processed_landmarks["left_knee"][1] * dimensions[0], processed_landmarks["left_ankle"][1] * dimensions[0]], 'g-')
+    
+    plt.axis('off')
+    plt.savefig('output_image.png', bbox_inches='tight', pad_inches=0)
+    plt.close(fig)
 
-def draw_landmarks_on_image(rgb_image, detection_result):
-    pose_landmarks_list = detection_result.pose_landmarks
-    annotated_image = np.copy(rgb_image)
+    image = cv2.imread('output_image.png')
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-    # Loop through the detected poses to visualize.
-    for idx in range(len(pose_landmarks_list)):
-        pose_landmarks = pose_landmarks_list[idx]
+    os.remove('output_image.png')
 
-        # Draw the pose landmarks.
-        pose_landmarks_proto = landmark_pb2.NormalizedLandmarkList()
-        pose_landmarks_proto.landmark.extend(
-            [
-                landmark_pb2.NormalizedLandmark(
-                    x=landmark.x, y=landmark.y, z=landmark.z
-                )
-                for landmark in pose_landmarks
-            ]
-        )
-        solutions.drawing_utils.draw_landmarks(
-            annotated_image,
-            pose_landmarks_proto,
-            solutions.pose.POSE_CONNECTIONS,
-            solutions.drawing_styles.get_default_pose_landmarks_style(),
-        )
-    return annotated_image
+    return image
+    

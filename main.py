@@ -3,7 +3,8 @@ import preprocess.preprocess as preprocess
 import depth.depth as depth
 import cv2
 import matplotlib.pyplot as plt
-from pose import pose, draw, process_data
+from pose import pose, process_data, draw
+from matplotlib.patches import Circle
 
 
 def normalize_landmarks(landmarks):
@@ -21,6 +22,8 @@ def process_frame(np_img, debug):
     print("cropping image")
     cropped_image = preprocess.inference_image(np_img, debug)
 
+    dimensions = cropped_image.shape
+
     print("getting pose landmarks")
     landmarks = pose.get_landmarks(cropped_image, debug)
 
@@ -28,6 +31,12 @@ def process_frame(np_img, debug):
 
     np_landmarks = process_data.get_np_landmarks(landmarks_results.pose_landmarks)
     processed_landmarks = process_data.get_processed_landmarks(np_landmarks)
+
+    if debug:
+        print("drawing landmarks")
+        annotated_image = draw.draw_landmarks_on_image(cropped_image, processed_landmarks, dimensions)
+        plt.imshow(annotated_image)
+        plt.show()
 
     print("getting depth")
     landmarks = depth.inference_image(cropped_image, debug, processed_landmarks)
