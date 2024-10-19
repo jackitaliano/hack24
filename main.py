@@ -7,9 +7,15 @@ from pose import pose, draw, process_data
 
 
 def normalize_landmarks(landmarks):
-    # Normalize landmarks
-    print(landmarks)
+    pelvis = landmarks["pelvis"]
+
+    for keypoint in landmarks:
+        landmarks[keypoint][0] -= pelvis[0]
+        landmarks[keypoint][1] -= pelvis[1]
+        landmarks[keypoint][2] -= pelvis[2]
     
+    return landmarks
+
 def process_frame(np_img, debug):
 
     print("cropping image")
@@ -26,13 +32,12 @@ def process_frame(np_img, debug):
     print("getting depth")
     landmarks = depth.inference_image(cropped_image, debug, processed_landmarks)
 
+    landmarks = normalize_landmarks(landmarks)
+
     if debug:
         print(landmarks)
 
-    landmarks = normalize_landmarks(landmarks)
-
     return landmarks
-    print(processed_landmarks)
 
 
 def main(type, file_path, debug):

@@ -22,6 +22,7 @@ def inference_image(frame, debug, landmarks):
     for keypoint in landmarks:
         x = int(landmarks[keypoint][0] * frame_dim[1])
         y = int(landmarks[keypoint][1] * frame_dim[0])
+
         landmarks[keypoint] = [landmarks[keypoint][0], landmarks[keypoint][1], depth[y, x]]        
     
     return landmarks
