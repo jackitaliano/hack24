@@ -24,7 +24,7 @@ REL_INDICES = np.array([0, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28])
 def get_np_landmarks(landmarks):
     landmarks = landmarks[0]
     np_landmarks = np.array(
-        [np.array([landmark.x, landmark.y]) for landmark in landmarks]
+        [np.array([landmark.x, landmark.y, landmark.z]) for landmark in landmarks]
     )
 
     return np_landmarks

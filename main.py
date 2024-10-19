@@ -14,11 +14,11 @@ def normalize_landmarks(landmarks):
         landmarks[keypoint][0] -= pelvis[0]
         landmarks[keypoint][1] -= pelvis[1]
         landmarks[keypoint][2] -= pelvis[2]
-    
+
     return landmarks
 
-def process_frame(np_img, debug):
 
+def process_frame(np_img, debug):
     print("cropping image")
     cropped_image = preprocess.inference_image(np_img, debug)
 
@@ -30,18 +30,21 @@ def process_frame(np_img, debug):
     landmarks_results = pose.get_landmarks(cropped_image, debug)
 
     np_landmarks = process_data.get_np_landmarks(landmarks_results.pose_landmarks)
+
     processed_landmarks = process_data.get_processed_landmarks(np_landmarks)
 
     if debug:
         print("drawing landmarks")
-        annotated_image = draw.draw_landmarks_on_image(cropped_image, processed_landmarks, dimensions)
+        annotated_image = draw.draw_landmarks_on_image(
+            cropped_image, processed_landmarks, dimensions
+        )
         plt.imshow(annotated_image)
         plt.show()
 
     print("getting depth")
-    landmarks = depth.inference_image(cropped_image, debug, processed_landmarks)
+    # landmarks = depth.inference_image(cropped_image, debug, processed_landmarks)
 
-    landmarks = normalize_landmarks(landmarks)
+    landmarks = normalize_landmarks(processed_landmarks)
 
     if debug:
         print(landmarks)
@@ -72,7 +75,9 @@ def main(type, file_path, debug):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run program")
-    parser.add_argument("type", type=str, help="The type of input data", choices=["video", "image"])
+    parser.add_argument(
+        "type", type=str, help="The type of input data", choices=["video", "image"]
+    )
     parser.add_argument("file_path", type=str, help="The source file path")
     parser.add_argument("debug", type=bool, help="Debugging mode", default=False)
 
