@@ -8,29 +8,15 @@ from pose import pose, draw, process_data
 
 def process_frame(np_img, debug):
     cropped_image = preprocess.inference_image(np_img, debug)
-    print("cropped")
 
     depth_map = depth.inference_image(cropped_image, debug)
 
-    print("depth")
     landmarks_results = pose.get_landmarks(cropped_image, debug)
 
-    relevant_landmarks = process_data.get_relevant_landmarks(
-        landmarks_results.pose_landmarks
-    )
-    processed_landmarks = process_data.get_processed_landmarks(relevant_landmarks)
-
-    relevant_landmarks_results = landmarks_results
-    relevant_landmarks_results.pose_landmarks = relevant_landmarks
+    np_landmarks = process_data.get_np_landmarks(landmarks_results.pose_landmarks)
+    processed_landmarks = process_data.get_processed_landmarks(np_landmarks)
 
     print(processed_landmarks)
-    # if debug:
-    #     print("showing")
-    #     annotated_img = draw.draw_landmarks_on_image(
-    #         cropped_image, relevant_landmarks_results
-    #     )
-    #     plt.imshow(annotated_img)
-    #     plt.show()
 
 
 def main(type, file_path, debug):
