@@ -6,6 +6,10 @@ import matplotlib.pyplot as plt
 from pose import pose, draw, process_data
 
 
+def normalize_landmarks(landmarks):
+    # Normalize landmarks
+    print(landmarks)
+
 def process_frame(np_img, debug):
 
     print("cropping image")
@@ -25,17 +29,13 @@ def process_frame(np_img, debug):
     relevant_landmarks_results = landmarks_results
     relevant_landmarks_results.pose_landmarks = relevant_landmarks
 
-    print(processed_landmarks)
-    # if debug:
-    #     print("showing")
-    #     annotated_img = draw.draw_landmarks_on_image(
-    #         cropped_image, relevant_landmarks_results
-    #     )
-    #     plt.imshow(annotated_img)
-    #     plt.show()
-
     print("getting depth")
-    landmarks = depth.inference_image(cropped_image, debug, landmarks)
+    landmarks = depth.inference_image(cropped_image, debug, processed_landmarks)
+
+    if debug:
+        print(landmarks)
+
+    landmarks = normalize_landmarks(landmarks)
 
     return landmarks
 

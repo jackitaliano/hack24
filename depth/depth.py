@@ -13,11 +13,15 @@ def inference_image(frame, debug, landmarks):
     depth -= .5
     depth *- 2.0
 
+    frame_dim = frame.shape
+
     if debug:    
         plt.imshow(depth, cmap="jet")
         plt.show()
 
     for keypoint in landmarks:
-        landmarks[keypoint] = [landmarks[keypoint][0], landmarks[keypoint][1], depth(landmarks[keypoint][1], landmarks[keypoint][0])]        
+        x = int(landmarks[keypoint][0] * frame_dim[1])
+        y = int(landmarks[keypoint][1] * frame_dim[0])
+        landmarks[keypoint] = [landmarks[keypoint][0], landmarks[keypoint][1], depth[y, x]]        
     
     return landmarks
