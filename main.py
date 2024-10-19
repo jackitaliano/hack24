@@ -9,7 +9,7 @@ from pose import pose, draw, process_data
 def normalize_landmarks(landmarks):
     # Normalize landmarks
     print(landmarks)
-
+    
 def process_frame(np_img, debug):
 
     print("cropping image")
@@ -18,16 +18,10 @@ def process_frame(np_img, debug):
     print("getting pose landmarks")
     landmarks = pose.get_landmarks(cropped_image, debug)
 
-    print("depth")
     landmarks_results = pose.get_landmarks(cropped_image, debug)
 
-    relevant_landmarks = process_data.get_relevant_landmarks(
-        landmarks_results.pose_landmarks
-    )
-    processed_landmarks = process_data.get_processed_landmarks(relevant_landmarks)
-
-    relevant_landmarks_results = landmarks_results
-    relevant_landmarks_results.pose_landmarks = relevant_landmarks
+    np_landmarks = process_data.get_np_landmarks(landmarks_results.pose_landmarks)
+    processed_landmarks = process_data.get_processed_landmarks(np_landmarks)
 
     print("getting depth")
     landmarks = depth.inference_image(cropped_image, debug, processed_landmarks)
@@ -38,6 +32,7 @@ def process_frame(np_img, debug):
     landmarks = normalize_landmarks(landmarks)
 
     return landmarks
+    print(processed_landmarks)
 
 
 def main(type, file_path, debug):
