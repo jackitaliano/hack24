@@ -28,14 +28,18 @@ def draw_landmarks_on_image(cropped_image, processed_landmarks, dimensions):
         [processed_landmarks["right_shoulder"][1] * dimensions[0], processed_landmarks["right_elbow"][1] * dimensions[0]], 'b-')
     ax.plot([processed_landmarks["right_elbow"][0] * dimensions[1], processed_landmarks["right_wrist"][0] * dimensions[1]],
         [processed_landmarks["right_elbow"][1] * dimensions[0], processed_landmarks["right_wrist"][1] * dimensions[0]], 'b-')
-    ax.plot([processed_landmarks["pelvis"][0] * dimensions[1], processed_landmarks["right_knee"][0] * dimensions[1]],
-        [processed_landmarks["pelvis"][1] * dimensions[0], processed_landmarks["right_knee"][1] * dimensions[0]], 'g-')
-    ax.plot([processed_landmarks["pelvis"][0] * dimensions[1], processed_landmarks["left_knee"][0] * dimensions[1]],
-        [processed_landmarks["pelvis"][1] * dimensions[0], processed_landmarks["left_knee"][1] * dimensions[0]], 'g-')
+    ax.plot([processed_landmarks["pelvis"][0] * dimensions[1], processed_landmarks["right_hip"][0] * dimensions[1]],
+        [processed_landmarks["pelvis"][1] * dimensions[0], processed_landmarks["right_hip"][1] * dimensions[0]], 'g-')
+    ax.plot([processed_landmarks["pelvis"][0] * dimensions[1], processed_landmarks["left_hip"][0] * dimensions[1]],
+        [processed_landmarks["pelvis"][1] * dimensions[0], processed_landmarks["left_hip"][1] * dimensions[0]], 'g-')
     ax.plot([processed_landmarks["right_knee"][0] * dimensions[1], processed_landmarks["right_ankle"][0] * dimensions[1]],
         [processed_landmarks["right_knee"][1] * dimensions[0], processed_landmarks["right_ankle"][1] * dimensions[0]], 'g-')
     ax.plot([processed_landmarks["left_knee"][0] * dimensions[1], processed_landmarks["left_ankle"][0] * dimensions[1]],
         [processed_landmarks["left_knee"][1] * dimensions[0], processed_landmarks["left_ankle"][1] * dimensions[0]], 'g-')
+    ax.plot([processed_landmarks["left_hip"][0] * dimensions[1], processed_landmarks["left_knee"][0] * dimensions[1]],
+        [processed_landmarks["left_hip"][1] * dimensions[0], processed_landmarks["left_knee"][1] * dimensions[0]], 'g-')
+    ax.plot([processed_landmarks["right_hip"][0] * dimensions[1], processed_landmarks["right_knee"][0] * dimensions[1]],
+        [processed_landmarks["right_hip"][1] * dimensions[0], processed_landmarks["right_knee"][1] * dimensions[0]], 'g-')
     
     plt.axis('off')
     plt.savefig('output_image.png', bbox_inches='tight', pad_inches=0)
