@@ -7,10 +7,10 @@ def load_model():
     bpy.ops.object.delete()
 
     # get human model file path
-    fbx_file_path = os.path.join(os.path.dirname(__file__), "obj", "scene.fbx")
+    fbx_file_path = os.path.join(os.path.dirname(__file__), "obj", "obj_and_armature.fbx")
 
     # Import the .obj file
-    bpy.ops.import_scene.fbx(filepath=fbx_file_path)
+    bpy.ops.import_scene.fbx(filepath=fbx_file_path, automatic_bone_orientation=True, force_connect_children=True)
 
     # Access the armature and mesh objects
     armature = bpy.data.objects["Armature"]  # Replace with the actual armature name
