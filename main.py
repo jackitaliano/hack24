@@ -46,16 +46,14 @@ def process_frame(np_img, debug):
 
     landmarks = normalize_landmarks(processed_landmarks)
 
-    if debug:
-        print(landmarks)
-
     return landmarks
 
 
 def main(type, file_path, debug):
     if type == "image":
         np_img = plt.imread(file_path)
-        process_frame(np_img, debug)
+        landmarks = process_frame(np_img, debug)
+        return landmarks
 
     elif type == "video":
         landmarks_per_frame = []
@@ -70,7 +68,8 @@ def main(type, file_path, debug):
             landmarks_per_frame.append(landmarks)
         cap.release()
 
-    # return landmarks_per_frame
+        print(landmarks_per_frame)
+        return landmarks_per_frame
 
 
 if __name__ == "__main__":

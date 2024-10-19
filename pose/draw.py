@@ -155,4 +155,3 @@ def draw_landmarks_on_image(cropped_image, processed_landmarks, dimensions):
     os.remove("output_image.png")
 
     return image
-
