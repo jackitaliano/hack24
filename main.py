@@ -43,7 +43,9 @@ def process_frame(np_img, debug):
 def main(type, file_path, debug):
     if type == "image":
         np_img = plt.imread(file_path)
-        process_frame(np_img, debug)
+        landmark = process_frame(np_img, debug)
+
+        return landmark
 
     elif type == "video":
         landmarks_per_frame = []
@@ -58,7 +60,7 @@ def main(type, file_path, debug):
             landmarks_per_frame.append(landmarks)
         cap.release()
 
-    # return landmarks_per_frame
+        return landmarks_per_frame
 
 
 if __name__ == "__main__":
