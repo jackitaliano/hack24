@@ -1,60 +1,49 @@
 import numpy as np
+from numpy.ma.core import indices
 import numpy.typing as npt
 
 LAND_MARK_NAMES = [
-    "left_eye",
-    "right_eye",
+    "nose",
+    "neck",
     "left_shoulder",
     "right_shoulder",
     "left_elbow",
     "right_elbow",
     "left_wrist",
     "right_wrist",
-    "left_pinky",
-    "right_pinky",
-    "left_index",
-    "right_index",
-    "left_thumb",
-    "right_thumb",
-    "left_hip",
-    "right_hip",
+    "pelvis",
     "left_knee",
     "right_knee",
     "left_ankle",
     "right_ankle",
-    "left_heel",
-    "right_heel",
-    "left_foot_index",
-    "right_foot_index",
 ]
 
-# d = {
-#     "left_eye": [1, 2],
-#     "right_eye": [2, 3]
-# }
-
-INDICES = np.array([2, 5] + list(range(11, 32)))
+REL_INDICES = np.array([0, 11, 12, 13, 14, 15, 16, 25, 26, 27, 28])
 
 
-def get_relevant_landmarks(landmarks):
+def get_np_landmarks(landmarks):
     landmarks = landmarks[0]
+    np_landmarks = np.array(
+        [np.array([landmark.x, landmark.y]) for landmark in landmarks]
+    )
 
-    return [[landmarks[i] for i in INDICES]]
+    return np_landmarks
 
 
-def get_processed_landmarks(landmarks):
-    landmarks = landmarks[0]
+def get_processed_landmarks(np_landmarks):
+    shoulders = np_landmarks[11:13]
+    hips = np_landmarks[23:25]
+    neck = np.mean(shoulders, axis=0)
+    pelvis = np.mean(hips, axis=0)
+
+    rel_landmarks = np_landmarks[REL_INDICES]
+    rel_landmarks = np.insert(rel_landmarks, 1, neck, axis=0)
+    rel_landmarks = np.insert(rel_landmarks, 8, pelvis, axis=0)
 
     processed_landmarks = {}
-    for i in range(len(landmarks)):
-        landmark = landmarks[i]
-
-        y = landmark.y
-        x = landmark.x
-
+    for i in range(len(rel_landmarks)):
         name = LAND_MARK_NAMES[i]
-        value = (x, y)
-
-        processed_landmarks[name] = value
+        val = rel_landmarks[i]
+        processed_landmarks[name] = val
 
     return processed_landmarks
