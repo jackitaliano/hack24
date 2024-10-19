@@ -41,7 +41,7 @@ def process_frame(np_img, debug):
         plt.imshow(annotated_image)
         plt.show()
 
-    print("getting depth")
+    # print("getting depth")
     # landmarks = depth.inference_image(cropped_image, debug, processed_landmarks)
 
     landmarks = normalize_landmarks(processed_landmarks)
@@ -53,6 +53,7 @@ def main(type, file_path, debug):
     if type == "image":
         np_img = plt.imread(file_path)
         landmarks = process_frame(np_img, debug)
+        print(landmarks)
         return landmarks
 
     elif type == "video":

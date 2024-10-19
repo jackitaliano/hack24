@@ -103,21 +103,43 @@ def draw_landmarks_on_image(cropped_image, processed_landmarks, dimensions):
     ax.plot(
         [
             processed_landmarks["pelvis"][0] * dimensions[1],
-            processed_landmarks["right_knee"][0] * dimensions[1],
+            processed_landmarks["right_hip"][0] * dimensions[1],
         ],
         [
             processed_landmarks["pelvis"][1] * dimensions[0],
-            processed_landmarks["right_knee"][1] * dimensions[0],
+            processed_landmarks["right_hip"][1] * dimensions[0],
         ],
         "g-",
     )
     ax.plot(
         [
             processed_landmarks["pelvis"][0] * dimensions[1],
-            processed_landmarks["left_knee"][0] * dimensions[1],
+            processed_landmarks["left_hip"][0] * dimensions[1],
         ],
         [
             processed_landmarks["pelvis"][1] * dimensions[0],
+            processed_landmarks["left_hip"][1] * dimensions[0],
+        ],
+        "g-",
+    )
+    ax.plot(
+        [
+            processed_landmarks["right_hip"][0] * dimensions[1],
+            processed_landmarks["right_knee"][0] * dimensions[1],
+        ],
+        [
+            processed_landmarks["right_hip"][1] * dimensions[0],
+            processed_landmarks["right_knee"][1] * dimensions[0],
+        ],
+        "g-",
+    )
+    ax.plot(
+        [
+            processed_landmarks["left_hip"][0] * dimensions[1],
+            processed_landmarks["left_knee"][0] * dimensions[1],
+        ],
+        [
+            processed_landmarks["left_hip"][1] * dimensions[0],
             processed_landmarks["left_knee"][1] * dimensions[0],
         ],
         "g-",
