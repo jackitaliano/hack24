@@ -1,5 +1,27 @@
 import bpy
 import os
+import numpy as np
+
+prevJointMap = \
+{
+'Left_Clavical': [    0.17295,    -0.30915,    -0.66739], 
+'Right_Clavical': [   -0.23728,    -0.28415,      0.1915], 
+'Left_Upper_Arm': [    0.33931,    -0.16232,     -1.0074], 
+'Right_Upper_Arm': [   -0.22617,    -0.14275,     0.53093], 
+'Left_Lower_Arm': [-0.00080627,     -0.1601,     -1.7631], 
+'Right_Lower_Arm': [   -0.23589,   -0.021804,    -0.12531], 
+}
+
+currentJointMap = \
+{
+'Left_Clavical': [    0.17295,    -0.30915,    -0.66739], 
+'Right_Clavical': [   -0.23728,    -0.28415,      0.1915], 
+'Left_Upper_Arm': [    0.33931,    0,     -1.0074], 
+'Right_Upper_Arm': [   -0.22617,    -0.14275,     0.53093], 
+'Left_Lower_Arm': [-0.00080627,     -0.1601,     -1.7631], 
+'Right_Lower_Arm': [   -0.23589,   -0.021804,    -0.12531], 
+}
+
 
 def load_model():
     # Ensure the scene is clear (optional)
@@ -22,6 +44,15 @@ def load_model():
 
     return armature, mesh
 
+# helper method to calculate the rotations in each direction for a particular joint
+def get_rotations(X_prev, X_next):
+    D = (X_next[0] - X_prev[0], X_next[1] - X_prev[1], X_next[2] - X_prev[2])
+
+    X_rot = np.arctan2(D[1], D[2])
+    Y_rot = np.arctan2(D[0], np.sqrt(D[1]**2 + D[2]**2))
+    Z_rot = np.arctan2(D[2], D[0])
+
+    return (X_rot, Y_rot, Z_rot)
 
 def animate():
     armature, mesh = load_model()
@@ -41,28 +72,23 @@ def animate():
     armature.animation_data_create()
     armature.animation_data.action = action
 
-    # Keyframes definition
-    keyframes = [
-        (0, (0, 0, 0), (0, 0, 0, 0)),    # Frame 0: Original position and rotation
-        (10, (0, 1, 0), (.1, 0, 0, 0)), # Frame 10: Move up and rotate
-        (20, (0, 0, 0), (0, 0, 0, 0)),   # Frame 20: Return to original position
-    ]
+    for bone in armature.pose.bones:
+        # calculate its rotation between prev position and current
+        if bone.name in prevJointMap.keys() and bone.name in currentJointMap.keys():
+            prevPos = prevJointMap[bone.name]
+            currentPos = currentJointMap[bone.name]
 
-    # Move and rotate the bone, and insert keyframes
-    bone_name = "Spine"  # Change to your actual bone name
-    bone = armature.pose.bones.get(bone_name)
+            X_rot, Y_rot, Z_rot = get_rotations(prevPos, currentPos)
 
-    if bone is None:
-        print(f"Bone '{bone_name}' not found.")
-        return
+            keyframes = [
+                (0, (0,0,0)),
+                (30, (X_rot, Y_rot, Z_rot))
+            ]
 
-    for frame, position, rotation in keyframes:
-        # Set the bone's location and rotation
-        bone.location = position  # Change this to your desired position
-        bone.rotation_quaternion = (rotation[0], rotation[1], rotation[2], rotation[3])  # Change this to your desired rotation
-        # Insert keyframes for the location and rotation
-        bone.keyframe_insert(data_path="location", frame=frame)
-        bone.keyframe_insert(data_path="rotation_quaternion", frame=frame)
+            for frame, rotation in keyframes:
+                bone.rotation_mode = 'XYZ'
+                bone.rotation_euler = rotation
+                bone.keyframe_insert(data_path="rotation_euler", frame=frame)
 
 
     # Switch back to Object Mode
@@ -70,7 +96,8 @@ def animate():
 
     # Set the timeline frame range
     bpy.context.scene.frame_start = 0
-    bpy.context.scene.frame_end = 20
+    bpy.context.scene.frame_end = 30
 
 # Call the animate function
 animate()
+
