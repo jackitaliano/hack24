@@ -25,7 +25,7 @@ REL_INDICES = np.array([11, 12, 13, 14, 15, 16, 25, 26, 27, 28])
 def get_np_landmarks(landmarks):
     landmarks = landmarks[0]
     np_landmarks = np.array(
-        [np.array([landmark.x, landmark.y, landmark.z]) for landmark in landmarks]
+        [np.array([landmark.x, landmark.y]) for landmark in landmarks]
     )
 
     return np_landmarks
@@ -38,7 +38,7 @@ def get_processed_landmarks(np_landmarks):
     pelvis = np.mean(hips, axis=0)
     right_hip = np_landmarks[24]
     left_hip = np_landmarks[23]
-    nose = np.array([np.mean([np_landmarks[0][0], neck[0]]), np_landmarks[0][1], np_landmarks[0][2]])
+    nose = np.array([np.mean([np_landmarks[0][0], neck[0]]), np_landmarks[0][1]])
 
     rel_landmarks = np_landmarks[REL_INDICES]
     rel_landmarks = np.insert(rel_landmarks, 0, nose, axis=0)
