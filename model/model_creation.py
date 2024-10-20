@@ -32,7 +32,6 @@ currentJointMap = \
 
 animation_frames=60
 
-
 def load_model():
     # Ensure the scene is clear (optional)
     bpy.ops.object.select_all(action='SELECT')
