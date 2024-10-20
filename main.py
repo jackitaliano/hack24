@@ -18,9 +18,9 @@ def normalize_landmarks(landmarks):
     return landmarks
 
 
-def process_frame(np_img, debug):
-    print("cropping image")
-    cropped_image = preprocess.inference_image(np_img, debug)
+def process_frame(cropped_image, debug):
+    # print("cropping image")
+    # cropped_image = preprocess.inference_image(np_img, debug)
 
     dimensions = cropped_image.shape
 
