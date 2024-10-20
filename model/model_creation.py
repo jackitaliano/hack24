@@ -9,18 +9,28 @@ prevJointMap = \
 'Left_Upper_Arm': [    0.33931,    -0.16232,     -1.0074], 
 'Right_Upper_Arm': [   -0.22617,    -0.14275,     0.53093], 
 'Left_Lower_Arm': [-0.00080627,     -0.1601,     -1.7631], 
-'Right_Lower_Arm': [   -0.23589,   -0.021804,    -0.12531], 
+'Right_Lower_Arm': [   -0.23589,   -0.021804,    -0.12531],
+'Left_Upper_Leg': [    0.52694,     0.72389,    -0.50208],
+'Right_Upper_Leg': [    0.31132,     0.72242,     0.54539],
+'Left_Lower_Leg': [    0.82983,     0.88608,      0.3265],
+'Right_Lower_Leg': [    0.39244,     0.91497,      1.4957]
 }
 
 currentJointMap = \
 {
 'Left_Clavical': [    0.17295,    -0.30915,    -0.66739], 
 'Right_Clavical': [   -0.23728,    -0.28415,      0.1915], 
-'Left_Upper_Arm': [    0.33931,    0,     -1.0074], 
-'Right_Upper_Arm': [   -0.22617,    -0.14275,     0.53093], 
-'Left_Lower_Arm': [-0.00080627,     -0.1601,     -1.7631], 
-'Right_Lower_Arm': [   -0.23589,   -0.021804,    -0.12531], 
+'Left_Upper_Arm': [    0.33931,    -0.16232,     -1.0074], 
+'Right_Upper_Arm': [   -0.22617,    -0.14275,     0.53093], # this works
+'Left_Lower_Arm': [-0.00080627,     -0.1601,     -1.7631], # this works
+'Right_Lower_Arm': [   -0.23589,   -0.021804,    -0.12531],
+'Left_Upper_Leg': [    0.52694,     0.72389,    -0.50208],
+'Right_Upper_Leg': [    0.31132,     0.72242,     0.54539],
+'Left_Lower_Leg': [    0.82983,     0.88608,      0.3265],
+'Right_Lower_Leg': [    0.39244,     0.91497,      1.4957]
 }
+
+animation_frames=60
 
 
 def load_model():
@@ -44,6 +54,31 @@ def load_model():
 
     return armature, mesh
 
+def set_to_rest():
+    # Get the armature object
+    armature_name = 'Armature'  
+    armature = bpy.data.objects.get(armature_name)
+
+    if armature and armature.type == 'ARMATURE':
+        # Switch to Pose mode
+        bpy.context.view_layer.objects.active = armature
+        bpy.ops.object.mode_set(mode='POSE')
+        
+        # Clear all transformations
+        for bone in armature.pose.bones:
+            bone.location = (0, 0, 0)  # Reset location
+            bone.rotation_euler = (0, 0, 0)  # Reset rotation (in Euler)
+            bone.rotation_mode = 'XYZ'  # Set rotation mode to XYZ if needed
+            bone.keyframe_insert(data_path="location")  # Insert keyframe for location
+            bone.keyframe_insert(data_path="rotation_euler")  # Insert keyframe for rotation
+
+        # Switch back to Object mode
+        bpy.ops.object.mode_set(mode='OBJECT')
+
+        print("Armature reset to rest state.")
+    else:
+        print("Armature not found or is not of type 'ARMATURE'.")
+
 # helper method to calculate the rotations in each direction for a particular joint
 def get_rotations(X_prev, X_next):
     D = (X_next[0] - X_prev[0], X_next[1] - X_prev[1], X_next[2] - X_prev[2])
@@ -55,6 +90,9 @@ def get_rotations(X_prev, X_next):
     return (X_rot, Y_rot, Z_rot)
 
 def animate():
+    # set the model to rest before animating
+    set_to_rest()
+
     armature, mesh = load_model()
 
     if armature is None or mesh is None:
@@ -82,7 +120,7 @@ def animate():
 
             keyframes = [
                 (0, (0,0,0)),
-                (30, (X_rot, Y_rot, Z_rot))
+                (animation_frames, (X_rot, Y_rot, Z_rot))
             ]
 
             for frame, rotation in keyframes:
@@ -96,7 +134,7 @@ def animate():
 
     # Set the timeline frame range
     bpy.context.scene.frame_start = 0
-    bpy.context.scene.frame_end = 30
+    bpy.context.scene.frame_end = animation_frames
 
 # Call the animate function
 animate()
